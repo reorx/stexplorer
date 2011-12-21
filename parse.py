@@ -42,12 +42,12 @@ def sim_playmedia1(
 
 def sim_GetSongType(md5):
     typeDict = {
-        "7d99bb4c7bd4602c342e2bb826ee8777": ".wma",
-        "25e4f07f5123910814d9b8f3958385ba": ".Wma",
-        "51bbd020689d1ce1c845a484995c0cce": ".WMA",
-        "b3a7a4e64bcd8aabe4cabe0e55b57af5": ".mp3",
-        "d82029f73bcaf052be8930f6f4247184": ".MP3",
-        "5fd91d90d9618feca4740ac1f2e7948f": ".Mp3",
+        "7d99bb4c7bd4602c342e2bb826ee8777": "wma",
+        "25e4f07f5123910814d9b8f3958385ba": "Wma",
+        "51bbd020689d1ce1c845a484995c0cce": "WMA",
+        "b3a7a4e64bcd8aabe4cabe0e55b57af5": "mp3",
+        "d82029f73bcaf052be8930f6f4247184": "MP3",
+        "5fd91d90d9618feca4740ac1f2e7948f": "Mp3",
     }
     return typeDict[md5]
 
@@ -92,9 +92,16 @@ def get_songurl(songinfo):
     return sim_playmedia1(meta['strURL'], meta['md5_type'],
                           meta['url_head'], meta['songid'])
 
+def clear_end_dot(name):
+    while True:
+        if not name.endswith('.'):
+            return
+        name = name[:-1]
+
 def get_songfile(songurl, songinfo):
     # TODO write proper filename and id3 info by complete songinfo
     from downloader import download
+    clear_end_dot(songinfo['page_title'])
     filename = songinfo['page_title'] + '.' + songinfo['mediatype']
     download(songurl, filename)
     logging.info('..done')
