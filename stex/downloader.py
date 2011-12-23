@@ -37,7 +37,7 @@ def download(url, fname, dirpath=None):
     resp_info = resp.info()
     song_size = int(resp_info.getheaders('Content-Length')[0])
     song_size_d = 0
-    chunk_size = 1024*200
+    chunk_size = 1024*500
     
     if dirpath is None:
         fpath = fname

@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import os
 import re
 import sys
 import requests
@@ -172,19 +173,23 @@ class STPageParser(object):
         self.info_id3()
         self.info_ST()
         
+        logging.info('\n' + str(self.songinfo))
         return self.songinfo
 
 
-def clear_end_dot(name):
+def clean_end(name):
+    """
+    clean dot and other strange chars which may infulence id3 data set
+    """
     while True:
-        if not name.endswith('.'):
+        if not name.endswith('.') and not name.endswith(' '):
             return
         name = name[:-1]
 
 def get_songfile(songurl, songinfo):
     # TODO write proper filename and id3 info by complete songinfo
     from downloader import download
-    clear_end_dot(songinfo['page_title'])
+    clean_end(songinfo['page_title'])
     filename = songinfo['page_title'] + '.' + songinfo['mediatype']
     download(songurl, filename)
     logging.info('..done')
@@ -193,4 +198,21 @@ def get_songfile(songurl, songinfo):
 if '__main__' == __name__:
     # TODO parse arguments
     songinfo = STPageParser(sys.argv[1]).parse()
-    print songinfo
+    from downloader import download
+    song_title = songinfo['id3']['title']
+    clean_end(song_title)
+    fname = song_title + '.' + songinfo['_mediatype']
+    dir_str = getattr(settings, 'DOWNLOAD_PATH', 'download')
+    # check if exists
+    if os.path.isabs(dir_str):
+        dirpath = dir_str
+    else:
+        root = os.path.join(os.path.dirname(__file__), '../')
+        dirpath = os.path.join(root, dir_str)
+    if not os.path.isdir(dirpath):
+        os.makedirs(dirpath)
+    fpath = download(songinfo['_mediaurl'],
+                     fname, dirpath)
+    print fpath
+#    from song import reset_id3
+#    reset_id3(fpath, songinfo)
