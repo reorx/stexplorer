@@ -1,15 +1,14 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-import sys
+'''
+Created on 2011-12-23
+
+@author: reorx
+'''
+
+import os.path
+import urllib2
 from urlparse import urlparse
 
-import urllib2
-def read_in_chunks(fobj, chunk_size=1024):
-    while True:
-        data = fobj.read(chunk_size)
-        if not data:
-            break
-        yield
 
 HEADERS = {
     'Accept':'*/*',
@@ -23,27 +22,38 @@ HEADERS = {
     'User-Agent':'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.2 (KHTML, like Gecko) Ubuntu/10.04 Chromium/15.0.874.121 Chrome/15.0.874.121 Safari/535.2',
 }
 
-def download(url, fname):
+def read_in_chunks(fobj, chunk_size=1024):
+    while True:
+        data = fobj.read(chunk_size)
+        if not data:
+            break
+        yield
+
+def download(url, fname, dirpath=None):
     HEADERS['Host'] = urlparse(url).netloc
     HEADERS['Referer'] = url
     req = urllib2.Request(url, headers=HEADERS)
-    song = urllib2.urlopen(req)
-    song_info = song.info()
-    song_size = int(song_info.getheaders('Content-Length')[0])
+    resp = urllib2.urlopen(req)
+    resp_info = resp.info()
+    song_size = int(resp_info.getheaders('Content-Length')[0])
     song_size_d = 0
     chunk_size = 1024*200
-    with open(fname, 'wb') as f:
-        #for piece in read_in_chunks(song, chunk_size):
+    
+    if dirpath is None:
+        fpath = fname
+    else:
+        fpath = os.path.join(dirpath, fname)
+    with open(fpath, 'wb') as f:
+        #for piece in read_in_chunks(resp, chunk_size):
             #print song_size_d/song_size, '% finished'
             #f.write(piece)
             #song_size_d += chunk_size
         while True:
-            buf = song.read(chunk_size)
+            buf = resp.read(chunk_size)
             if not buf: break
             f.write(buf)
             percent = (float(song_size_d)/float(song_size))*100
             print percent, '% finished'
             song_size_d += chunk_size
+    return os.path.abspath(fpath)
 
-if __name__ == '__main__':
-    download(sys.argv[1])

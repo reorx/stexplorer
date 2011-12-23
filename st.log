@@ -1,9 +1,0 @@
-INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): www.songtaste.com
-INFO:root:get songinfo success..
-INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): www.songtaste.com
-INFO:root:get songurl success..
-INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): m4.songtaste.com
-INFO:root:heiehei
-INFO:root:heiehei
-INFO:root:heiehei
-INFO:root:heiehei
