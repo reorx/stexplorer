@@ -1,8 +1,7 @@
-#Sun Dec 25 19:01:18 CST 2011
+#Sun Dec 25 21:25:25 CST 2011
 eclipse.preferences.version=1
 encoding//stex/GUI/skeleton.py=utf-8
 encoding//stex/downloader.py=utf-8
-encoding//stex/main.py=utf-8
 encoding//stex/maingui.py=utf-8
 encoding//stex/settings.py=utf-8
 encoding//stex/song.py=utf-8

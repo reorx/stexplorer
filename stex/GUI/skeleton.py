@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sun Dec 25 18:58:17 2011
+# Created: Sun Dec 25 23:43:50 2011
 #      by: PyQt4 UI code generator 4.8.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,6 +17,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
+        MainWindow.setEnabled(True)
         MainWindow.resize(383, 256)
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
         self.centralwidget = QtGui.QWidget(MainWindow)
@@ -45,6 +46,7 @@ class Ui_MainWindow(object):
         self.progressBar.setTextDirection(QtGui.QProgressBar.TopToBottom)
         self.progressBar.setObjectName(_fromUtf8("progressBar"))
         self.pushButton = QtGui.QPushButton(self.centralwidget)
+        self.pushButton.setEnabled(False)
         self.pushButton.setGeometry(QtCore.QRect(290, 180, 71, 23))
         self.pushButton.setText(QtGui.QApplication.translate("MainWindow", "Start", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton.setObjectName(_fromUtf8("pushButton"))
@@ -60,13 +62,16 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         MainWindow.setStatusBar(self.statusbar)
         self.actionST_Explorer = QtGui.QAction(MainWindow)
+        self.actionST_Explorer.setCheckable(False)
+        self.actionST_Explorer.setChecked(False)
+        self.actionST_Explorer.setEnabled(True)
         self.actionST_Explorer.setText(QtGui.QApplication.translate("MainWindow", "ST Explorer", None, QtGui.QApplication.UnicodeUTF8))
         self.actionST_Explorer.setObjectName(_fromUtf8("actionST_Explorer"))
         self.menuAbout.addAction(self.actionST_Explorer)
         self.menubar.addAction(self.menuAbout.menuAction())
 
         self.retranslateUi(MainWindow)
-        QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.acceptStart)
+        QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.start)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

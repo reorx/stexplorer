@@ -7,6 +7,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+# fix py2exe uninclude package problem
+#import sip #@UnusedImport
+
 from PyQt4 import QtCore, QtGui
 
 try:
@@ -17,6 +20,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
+        MainWindow.setEnabled(True)
         MainWindow.resize(383, 256)
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
         self.centralwidget = QtGui.QWidget(MainWindow)
@@ -33,11 +37,6 @@ class Ui_MainWindow(object):
         self.checkBox.setGeometry(QtCore.QRect(20, 90, 101, 16))
         self.checkBox.setText(QtGui.QApplication.translate("MainWindow", "ID3 auto fix", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBox.setObjectName(_fromUtf8("checkBox"))
-        self.buttonBox = QtGui.QDialogButtonBox(self.centralwidget)
-        self.buttonBox.setGeometry(QtCore.QRect(20, 170, 341, 32))
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.label = QtGui.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(20, 20, 71, 16))
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Song id/url", None, QtGui.QApplication.UnicodeUTF8))
@@ -49,6 +48,11 @@ class Ui_MainWindow(object):
         self.progressBar.setTextVisible(True)
         self.progressBar.setTextDirection(QtGui.QProgressBar.TopToBottom)
         self.progressBar.setObjectName(_fromUtf8("progressBar"))
+        self.pushButton = QtGui.QPushButton(self.centralwidget)
+        self.pushButton.setEnabled(True)
+        self.pushButton.setGeometry(QtCore.QRect(290, 180, 71, 23))
+        self.pushButton.setText(QtGui.QApplication.translate("MainWindow", "Start", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton.setObjectName(_fromUtf8("pushButton"))
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 383, 23))
@@ -61,24 +65,62 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         MainWindow.setStatusBar(self.statusbar)
         self.actionST_Explorer = QtGui.QAction(MainWindow)
+        self.actionST_Explorer.setCheckable(False)
+        self.actionST_Explorer.setChecked(False)
+        self.actionST_Explorer.setEnabled(True)
         self.actionST_Explorer.setText(QtGui.QApplication.translate("MainWindow", "ST Explorer", None, QtGui.QApplication.UnicodeUTF8))
         self.actionST_Explorer.setObjectName(_fromUtf8("actionST_Explorer"))
         self.menuAbout.addAction(self.actionST_Explorer)
         self.menubar.addAction(self.menuAbout.menuAction())
 
         self.retranslateUi(MainWindow)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), self.start)
+        QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL(_fromUtf8("clicked()")), self.start)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        
+
+    def setupData(self):
+        self.getSettings()
         self.proc = {}
 
     def retranslateUi(self, MainWindow):
         pass
     
+    def getSettings(self):
+        class Settings: pass
+        self.settings = Settings()
+        self.settings.download = {
+            'chunk_size': 1024*100,
+        }
+    def FN_downloadBylineText(self):
+        from cmd_line import get_songid_from_alternative
+        from parse import get_songinfo, make_fpath
+        from downloader import fetch_file_resp
+        
+        lineText = self.lineEdit.text().__str__()
+        songid = get_songid_from_alternative(lineText)
+        songinfo = get_songinfo(songid)
+        
+        resp = fetch_file_resp(songinfo['_mediaurl'])
+        fpath = make_fpath(songinfo)
+        with open(fpath, 'wb') as f:
+            chunk_size = self.settings.download['chunk_size']
+            song_size = int(resp.info().getheaders('Content-Length')[0])
+            song_size_d = 0
+            while True:
+                buf = resp.read(chunk_size)
+                if not buf: break
+                f.write(buf)
+                self.changeProgressBar(100*float(song_size_d)/float(song_size))
+                song_size_d += chunk_size
+            self.changeProgressBar(100)
+    
     def start(self):
-        self.progressBar.setProperty("value", self.progressBar.value()+10)
-        self.lineEdit.setText(str(self.progressBar.value()))
-        pass
+        self.pushButton.setEnabled(False)
+        self.FN_downloadBylineText()
+        self.pushButton.setEnabled(True)
+
+    def changeProgressBar(self, value):
+        self.progressBar.setProperty("value", int(value))
+
 
 
 if __name__ == "__main__":
@@ -87,6 +129,7 @@ if __name__ == "__main__":
     MainWindow = QtGui.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
+    ui.setupData()
     MainWindow.show()
     sys.exit(app.exec_())
 

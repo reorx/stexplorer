@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -86,6 +89,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>290</x>
@@ -138,7 +144,7 @@
    <sender>pushButton</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>acceptStart()</slot>
+   <slot>start()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>292</x>
@@ -152,6 +158,6 @@
   </connection>
  </connections>
  <slots>
-  <slot>acceptStart()</slot>
+  <slot>start()</slot>
  </slots>
 </ui>

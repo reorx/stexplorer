@@ -5,7 +5,7 @@ Created on 2011-12-23
 @author: reorx
 '''
 
-import os.path
+import os
 import urllib2
 from urlparse import urlparse
 
@@ -28,6 +28,13 @@ def read_in_chunks(fobj, chunk_size=1024):
         if not data:
             break
         yield
+        
+def fetch_file_resp(url):
+    HEADERS['Host'] = urlparse(url).netloc
+    HEADERS['Referer'] = url
+    req = urllib2.Request(url, headers=HEADERS)
+    resp = urllib2.urlopen(req)
+    return resp
 
 def download(url, fname, dirpath=None):
     HEADERS['Host'] = urlparse(url).netloc
@@ -56,4 +63,3 @@ def download(url, fname, dirpath=None):
             print percent, '% finished'
             song_size_d += chunk_size
     return os.path.abspath(fpath)
-

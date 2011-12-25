@@ -2,3 +2,5 @@
 *.mp3
 *.wma
 *.swp
+stex/build/
+stex/dist/
