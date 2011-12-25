@@ -3,5 +3,5 @@ download/
 *.mp3
 *.wma
 *.swp
-stex/build/
-stex/dist/
+build/
+dist/

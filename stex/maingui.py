@@ -7,8 +7,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-# fix py2exe uninclude package problem
-#import sip #@UnusedImport
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 from PyQt4 import QtCore, QtGui
 
@@ -49,7 +50,7 @@ class Ui_MainWindow(object):
         self.progressBar.setTextDirection(QtGui.QProgressBar.TopToBottom)
         self.progressBar.setObjectName(_fromUtf8("progressBar"))
         self.pushButton = QtGui.QPushButton(self.centralwidget)
-        self.pushButton.setEnabled(True)
+        self.pushButton.setEnabled(False)
         self.pushButton.setGeometry(QtCore.QRect(290, 180, 71, 23))
         self.pushButton.setText(QtGui.QApplication.translate("MainWindow", "Start", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton.setObjectName(_fromUtf8("pushButton"))
@@ -70,7 +71,16 @@ class Ui_MainWindow(object):
         self.actionST_Explorer.setEnabled(True)
         self.actionST_Explorer.setText(QtGui.QApplication.translate("MainWindow", "ST Explorer", None, QtGui.QApplication.UnicodeUTF8))
         self.actionST_Explorer.setObjectName(_fromUtf8("actionST_Explorer"))
+        self.actionAn_example = QtGui.QAction(MainWindow)
+        self.actionAn_example.setText(QtGui.QApplication.translate("MainWindow", "an example", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAn_example.setObjectName(_fromUtf8("actionAn_example"))
+        self.actionAuthor = QtGui.QAction(MainWindow)
+        self.actionAuthor.setText(QtGui.QApplication.translate("MainWindow", "author", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAuthor.setObjectName(_fromUtf8("actionAuthor"))
         self.menuAbout.addAction(self.actionST_Explorer)
+        self.menuAbout.addAction(self.actionAuthor)
+        self.menuAbout.addSeparator()
+        self.menuAbout.addAction(self.actionAn_example)
         self.menubar.addAction(self.menuAbout.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -90,10 +100,11 @@ class Ui_MainWindow(object):
         self.settings.download = {
             'chunk_size': 1024*100,
         }
+        
     def FN_downloadBylineText(self):
-        from cmd_line import get_songid_from_alternative
-        from parse import get_songinfo, make_fpath
-        from downloader import fetch_file_resp
+        from stex.cmd_line import get_songid_from_alternative
+        from stex.parse import get_songinfo, make_fpath
+        from stex.downloader import fetch_file_resp
         
         lineText = self.lineEdit.text().__str__()
         songid = get_songid_from_alternative(lineText)
@@ -114,14 +125,51 @@ class Ui_MainWindow(object):
             self.changeProgressBar(100)
     
     def start(self):
-        self.pushButton.setEnabled(False)
-        self.FN_downloadBylineText()
-        self.pushButton.setEnabled(True)
+        logging.info('ui start')
+#        self.pushButton.setEnabled(False)
+        FN_DownloadByLineText(MainWindow).start()
+#        self.pushButton.setEnabled(True)
 
     def changeProgressBar(self, value):
-        self.progressBar.setProperty("value", int(value))
+        self.progressBar.setValue(int(value))
+        
+    def togglePushButtonEnable(self):
+        if self.pushButton.isEnabled():
+            self.pushButton.setEnabled(False)
+            self.pushButton.setText('--')
+        else:
+            self.pushButton.setEnabled(True)
+            self.pushButton.setText('Start')
 
-
+class FN_DownloadByLineText(QtCore.QThread):
+    def run(self):
+        logging.info('download thread run')
+        from stex.cmd_line import get_songid_from_alternative
+        from stex.parse import get_songinfo, make_fpath
+        from stex.downloader import fetch_file_resp
+        
+        ui.togglePushButtonEnable()
+        
+        lineText = ui.lineEdit.text().__str__()
+        songid = get_songid_from_alternative(lineText)
+        songinfo = get_songinfo(songid)
+        
+        resp = fetch_file_resp(songinfo['_mediaurl'])
+        fpath = make_fpath(songinfo)
+        with open(fpath, 'wb') as f:
+            chunk_size = ui.settings.download['chunk_size']
+            song_size = int(resp.info().getheaders('Content-Length')[0])
+            song_size_d = 0
+            while True:
+                buf = resp.read(chunk_size)
+                if not buf: break
+                f.write(buf)
+                ui.changeProgressBar(100*float(song_size_d)/float(song_size))
+                song_size_d += chunk_size
+            ui.changeProgressBar(100)
+        ui.progressBar.reset()
+        
+        ui.togglePushButtonEnable()
 
 if __name__ == "__main__":
     import sys

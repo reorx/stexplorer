@@ -7,9 +7,9 @@ Created on 2011-12-25
 import os
 import sys
 
-import settings
-from parse import STPageParser, get_songid_from_alternative #@UnresolvedImport
-from downloader import download #@UnresolvedImport
+from stex import settings
+from stex.parse import STPageParser, get_songid_from_alternative
+from stex.downloader import download
 
 def easy_work(songid):
     songinfo = STPageParser(songid).parse()
@@ -27,7 +27,7 @@ def easy_work(songid):
     fpath = download(songinfo['_mediaurl'],
                      fname, dirpath)
     print fpath
-    from song import reset_id3
+    from stex.song import reset_id3
     reset_id3(fpath, songinfo)
     
 

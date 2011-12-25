@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sun Dec 25 23:43:50 2011
+# Created: Mon Dec 26 02:00:20 2011
 #      by: PyQt4 UI code generator 4.8.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -67,15 +67,32 @@ class Ui_MainWindow(object):
         self.actionST_Explorer.setEnabled(True)
         self.actionST_Explorer.setText(QtGui.QApplication.translate("MainWindow", "ST Explorer", None, QtGui.QApplication.UnicodeUTF8))
         self.actionST_Explorer.setObjectName(_fromUtf8("actionST_Explorer"))
+        self.actionAn_example = QtGui.QAction(MainWindow)
+        self.actionAn_example.setText(QtGui.QApplication.translate("MainWindow", "an example", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAn_example.setObjectName(_fromUtf8("actionAn_example"))
+        self.actionAuthor = QtGui.QAction(MainWindow)
+        self.actionAuthor.setText(QtGui.QApplication.translate("MainWindow", "author", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAuthor.setObjectName(_fromUtf8("actionAuthor"))
         self.menuAbout.addAction(self.actionST_Explorer)
+        self.menuAbout.addAction(self.actionAuthor)
+        self.menuAbout.addSeparator()
+        self.menuAbout.addAction(self.actionAn_example)
         self.menubar.addAction(self.menuAbout.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.start)
+        QtCore.QObject.connect(self.actionAn_example, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.menuExample)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         pass
+
+
+class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
+    def __init__(self, parent=None, f=QtCore.Qt.WindowFlags()):
+        QtGui.QMainWindow.__init__(self, parent, f)
+
+        self.setupUi(self)
 
 
 if __name__ == "__main__":

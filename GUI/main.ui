@@ -119,6 +119,9 @@
      <string>about</string>
     </property>
     <addaction name="actionST_Explorer"/>
+    <addaction name="actionAuthor"/>
+    <addaction name="separator"/>
+    <addaction name="actionAn_example"/>
    </widget>
    <addaction name="menuAbout"/>
   </widget>
@@ -135,6 +138,16 @@
    </property>
    <property name="text">
     <string>ST Explorer</string>
+   </property>
+  </action>
+  <action name="actionAn_example">
+   <property name="text">
+    <string>an example</string>
+   </property>
+  </action>
+  <action name="actionAuthor">
+   <property name="text">
+    <string>author</string>
    </property>
   </action>
  </widget>
@@ -156,8 +169,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionAn_example</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>menuExample()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>191</x>
+     <y>127</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>start()</slot>
+  <slot>menuExample()</slot>
  </slots>
 </ui>

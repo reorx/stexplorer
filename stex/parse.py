@@ -8,8 +8,8 @@ import os
 import requests
 import logging
 
-import settings #@UnresolvedImport
-from exception import BaseError, HTTPFetchError #@UnresolvedImport
+from stex import settings
+from stex.exception import BaseError, HTTPFetchError
 
 class ST(object):
     URL_PREFIX = 'http://'
@@ -185,8 +185,8 @@ def get_songid_from_alternative(s):
     from urlparse import urlparse
     if s.startswith('http://'):
         if s.endswith('/'):
-            url = s[:-1]
-        oUrl = urlparse(url)
+            s = s[:-1]
+        oUrl = urlparse(s)
         return oUrl.path.split('/')[-1]
     else:
         return s
@@ -203,7 +203,7 @@ def make_fpath(songinfo):
     if os.path.isabs(dir_str):
         dirpath = dir_str
     else:
-        root = os.path.join(os.path.dirname(__file__), '../')
+        root = os.path.join(os.getcwd(), '../')
         dirpath = os.path.join(root, dir_str)
     if not os.path.isdir(dirpath):
         os.makedirs(dirpath)
