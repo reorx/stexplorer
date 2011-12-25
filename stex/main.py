@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
+
 import os
 import re
 import sys
@@ -168,6 +168,8 @@ class STPageParser(object):
         if resp.status_code > 299:
             raise HTTPFetchError('get page failed') # TODO resp error message
         self.content = resp.content
+        print type(self.content)
+        self.content = self.content.decode('gbk')
         
         self.info_meta()
         self.info_id3()
@@ -214,5 +216,5 @@ if '__main__' == __name__:
     fpath = download(songinfo['_mediaurl'],
                      fname, dirpath)
     print fpath
-#    from song import reset_id3
-#    reset_id3(fpath, songinfo)
+    from song import reset_id3
+    reset_id3(fpath, songinfo)
