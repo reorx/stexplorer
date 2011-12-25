@@ -1,4 +1,5 @@
 *.py[co]
+download/
 *.mp3
 *.wma
 *.swp
