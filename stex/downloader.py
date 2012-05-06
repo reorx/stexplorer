@@ -37,9 +37,12 @@ def fetch_file_resp(url):
     return resp
 
 def download(url, fname, dirpath=None):
+    print '## url', url
     HEADERS['Host'] = urlparse(url).netloc
     HEADERS['Referer'] = url
-    req = urllib2.Request(url, headers=HEADERS)
+    print '## headers', HEADERS
+    #req = urllib2.Request(url, headers=HEADERS)
+    req = urllib2.Request(url)
     resp = urllib2.urlopen(req)
     resp_info = resp.info()
     song_size = int(resp_info.getheaders('Content-Length')[0])

@@ -26,7 +26,7 @@ def sim_playmedia1(
         songid):
     songurl = None
     if 'rayfile' in strURL:
-        songurl = url_head + strURL + sim_GetSongType(md5_type)
+        songurl = url_head + strURL + '.' + sim_GetSongType(md5_type)
     else:
         post_data = {
             'str': strURL,
@@ -36,9 +36,11 @@ def sim_playmedia1(
         if resp.status_code > 299:
             raise HTTPFetchError
         songurl = resp.content
-        logging.debug('sim_playmedia1: get songurl')
-        logging.debug(songurl)
-        return songurl
+        print '# songurl', resp.content
+        logging.info('sim_playmedia1: get songurl')
+        logging.info(songurl)
+
+    return songurl
 
 def sim_GetSongType(md5):
     typeDict = {
@@ -91,6 +93,7 @@ class STPageParser(object):
         }
         
     def _search(self, ptn_str, info_key=None):
+        print '# ptn_str', ptn_str
         ptn = re.compile(ptn_str, re.X)
         searched = ptn.search(self.content)
         if not searched:
@@ -111,7 +114,7 @@ class STPageParser(object):
         \<a\ href="javascript:playmedia1\(
             '\w+',
             '\w+',\s
-            '(?P<strURL>\w+)',\s
+            '(?P<strURL>[\w\/\.-]+)',\s
             '\d+',\s
             '\d+',\s
             '(?P<md5_type>\w+)',\s
@@ -121,9 +124,11 @@ class STPageParser(object):
 
         meta = self._search_many(ptn_str)
         
+        print '# get _mediaurl'
         self.songinfo['_mediaurl'] = sim_playmedia1(
                 meta['strURL'], meta['md5_type'],
                 meta['url_head'], meta['songid'])
+        print '# got _mediaurl', self.songinfo['_mediaurl']
         self.songinfo['_mediatype'] = sim_GetSongType(meta['md5_type'])
         self.songinfo['meta'] = meta
     
@@ -164,8 +169,11 @@ class STPageParser(object):
         print type(self.content)
         self.content = self.content.decode('gbk')
         
+	print '## info meta'
         self.info_meta()
+	print '## info id3'
         self.info_id3()
+	print '## info ST'
         self.info_ST()
         
         logging.info('\n' + str(self.songinfo))
