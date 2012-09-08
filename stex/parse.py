@@ -43,6 +43,9 @@ def sim_playmedia1(
     return songurl
 
 def sim_GetSongType(md5):
+    """
+    the md5 string is actually comes from eg. hashlib.md5('.mp3').hexdigest(), sigh..
+    """
     typeDict = {
         "7d99bb4c7bd4602c342e2bb826ee8777": "wma",
         "25e4f07f5123910814d9b8f3958385ba": "Wma",
