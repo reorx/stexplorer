@@ -15,7 +15,7 @@ def easy_work(songid):
     songinfo = STPageParser(songid).parse()
     song_title = songinfo['id3']['title']
     fname = song_title + '.' + songinfo['_mediatype']
-    dir_str = getattr(settings, 'DOWNLOAD_PATH', 'download')
+    dir_str = 'download'
     # check if exists
     if os.path.isabs(dir_str):
         dirpath = dir_str
@@ -29,14 +29,14 @@ def easy_work(songid):
     print fpath
     from stex.song import reset_id3
     reset_id3(fpath, songinfo)
-    
 
-    
+
+
 
 if '__main__' == __name__:
     import logging
     logging.basicConfig(level=logging.DEBUG)
-    
+
     strInput = sys.argv[1]
     songid = get_songid_from_alternative(strInput)
     easy_work(songid)

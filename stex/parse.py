@@ -8,8 +8,14 @@ import os
 import requests
 import logging
 
-from stex import settings
-from stex.exception import BaseError, HTTPFetchError
+
+class STParseError(Exception):
+    pass
+
+
+class STFetchError(Exception):
+    pass
+
 
 class ST(object):
     URL_PREFIX = 'http://'
@@ -19,11 +25,11 @@ class ST(object):
     def get_url(cls, rurl):
         return cls.URL_PREFIX + cls.DOMAIN + rurl
 
-def sim_playmedia1(
-        strURL,
-        md5_type,
-        url_head,
-        songid):
+
+def sim_playmedia1(strURL, md5_type, url_head, songid):
+    """
+    Simulated function of javascript ``playmedia1`` function
+    """
     songurl = None
     if 'rayfile' in strURL:
         songurl = url_head + strURL + '.' + sim_GetSongType(md5_type)
@@ -34,7 +40,7 @@ def sim_playmedia1(
         }
         resp = requests.post(ST.get_url('/time.php'), post_data)
         if resp.status_code > 299:
-            raise HTTPFetchError
+            raise STFetchError('get songurl from /time.php failed, status code: %s' % resp.status_code)
         songurl = resp.content
         print '# songurl', resp.content
         logging.info('sim_playmedia1: get songurl')
@@ -42,8 +48,11 @@ def sim_playmedia1(
 
     return songurl
 
+
 def sim_GetSongType(md5):
     """
+    Simulated function of javascript ``GetSongType`` function
+
     the md5 string is actually comes from eg. hashlib.md5('.mp3').hexdigest(), sigh..
     """
     typeDict = {
@@ -55,6 +64,7 @@ def sim_GetSongType(md5):
         "5fd91d90d9618feca4740ac1f2e7948f": "Mp3",
     }
     return typeDict[md5]
+
 
 class STPageParser(object):
     """
@@ -79,10 +89,7 @@ class STPageParser(object):
         :_mediaurl
         :_mediatype
     """
-    
-    class ParseError(BaseError):
-        pass
-    
+
     def __init__(self, songid):
         self.songinfo = {}
         self.songinfo['ST'] = {
@@ -90,27 +97,25 @@ class STPageParser(object):
         }
         self.songinfo['_url'] = ST.get_url('/song/%s/' % songid)
         self.songinfo['id3'] = {
-            'album': getattr(settings, 'ID3_ALBUM', 'SongTaste'),
-            'organization': getattr(settings, 'ID3_ORGANIZATION', 'ST Explorer'),
             'website': self.songinfo['_url'],
         }
-        
+
     def _search(self, ptn_str, info_key=None):
         print '# ptn_str', ptn_str
         ptn = re.compile(ptn_str, re.X)
         searched = ptn.search(self.content)
         if not searched:
-            raise STPageParser.ParseError(info_key or 'unexpected unknown info key')
+            raise STParseError(info_key or 'unexpected unknown info key')
         return searched
-        
+
     def _search_one(self, ptn_str, **kwgs):
         searched = self._search(ptn_str, **kwgs)
         return searched.groups()[0]
-    
+
     def _search_many(self, ptn_str, **kwgs):
         searched = self._search(ptn_str, **kwgs)
         return searched.groupdict()
-    
+
     def info_meta(self):
         logging.debug('parse meta')
         ptn_str = r"""
@@ -126,15 +131,14 @@ class STPageParser(object):
         """
 
         meta = self._search_many(ptn_str)
-        
+
         print '# get _mediaurl'
         self.songinfo['_mediaurl'] = sim_playmedia1(
-                meta['strURL'], meta['md5_type'],
-                meta['url_head'], meta['songid'])
+            meta['strURL'], meta['md5_type'], meta['url_head'], meta['songid'])
         print '# got _mediaurl', self.songinfo['_mediaurl']
         self.songinfo['_mediatype'] = sim_GetSongType(meta['md5_type'])
         self.songinfo['meta'] = meta
-    
+
     def info_id3(self):
         logging.debug('parse id3')
         ptn_str = r"""
@@ -142,12 +146,12 @@ class STPageParser(object):
         """
         self.songinfo['id3']['title'] = self._search_one(ptn_str)
         clean_end(self.songinfo['id3']['title'])
-        
+
         ptn_str = r"""
         \<h1\ class="h1singer"\>(?P<artist>.*)\<\/h1\>
         """
         self.songinfo['id3']['artist'] = self._search_one(ptn_str)
-    
+
     def info_ST(self):
         logging.debug('parse ST')
         ptn_str = r"""
@@ -162,23 +166,20 @@ class STPageParser(object):
             'username': st['username'],
             'id': st['rurl'].split('/')[1],
         }
-    
+
     def parse(self):
         logging.debug('parse')
         resp = requests.get(self.songinfo['_url'])
         if resp.status_code > 299:
-            raise HTTPFetchError('get page failed') # TODO resp error message
+            raise STFetchError('get page failed, status code: %s' % resp.status_code)
         self.content = resp.content
         print type(self.content)
         self.content = self.content.decode('gbk')
-        
-	print '## info meta'
+
         self.info_meta()
-	print '## info id3'
         self.info_id3()
-	print '## info ST'
         self.info_ST()
-        
+
         logging.info('\n' + str(self.songinfo))
         return self.songinfo
 
@@ -191,7 +192,8 @@ def clean_end(name):
         if not name.endswith('.') and not name.endswith(' '):
             return
         name = name[:-1]
-        
+
+
 def get_songid_from_alternative(s):
     from urlparse import urlparse
     if s.startswith('http://'):
@@ -201,15 +203,17 @@ def get_songid_from_alternative(s):
         return oUrl.path.split('/')[-1]
     else:
         return s
-        
+
+
 def get_songinfo(songid):
     songinfo = STPageParser(songid).parse()
     return songinfo
 
+
 def make_fpath(songinfo):
     song_title = songinfo['id3']['title']
     fname = song_title + '.' + songinfo['_mediatype']
-    dir_str = getattr(settings, 'DOWNLOAD_PATH', 'download')
+    dir_str = 'download'
     # check if exists
     if os.path.isabs(dir_str):
         dirpath = dir_str
@@ -220,4 +224,3 @@ def make_fpath(songinfo):
         os.makedirs(dirpath)
     fpath = os.path.abspath(os.path.join(dirpath, fname))
     return fpath
-
