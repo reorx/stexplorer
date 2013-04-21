@@ -3,26 +3,16 @@ Created on 2011-12-25
 
 @author: reorx
 '''
-from distutils.core import setup
-import py2exe
+from setuptools import setup
 
 setup(
-    name='ST Explorer',
+    name='stex',
     version='0.9.1',
-    description='A SongTaste Downloading Tool',
+    description='Core module of ST Explorer',
     author='reorx',
     author_email='novoreorx@gmail.com',
     packages=['stex'],
-    package_dir={'stex': 'stex'},
     install_requires=[
         'requests'
     ],
-
-    # py2exe options
-    options={
-        'py2exe': {
-            'includes': ['sip'],
-        }
-    },
-    windows=['stex/maingui.py'],
 )
