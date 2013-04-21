@@ -4,7 +4,7 @@ Created on 2011-12-25
 @author: reorx
 '''
 from distutils.core import setup
-import py2exe #@UnusedImport
+import py2exe
 
 setup(
     name='ST Explorer',
@@ -14,7 +14,11 @@ setup(
     author_email='novoreorx@gmail.com',
     packages=['stex'],
     package_dir={'stex': 'stex'},
-    # below is arguments used by py2exe
+    install_requires=[
+        'requests'
+    ],
+
+    # py2exe options
     options={
         'py2exe': {
             'includes': ['sip'],

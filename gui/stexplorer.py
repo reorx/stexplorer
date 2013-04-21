@@ -1,12 +1,16 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Mon Dec 26 02:00:20 2011
+# Created: Sun Dec 25 18:51:16 2011
 #      by: PyQt4 UI code generator 4.8.6
 #
 # WARNING! All changes made in this file will be lost!
 
+
+import sys
+import logging
 from PyQt4 import QtCore, QtGui
 
 try:
@@ -14,7 +18,12 @@ try:
 except AttributeError:
     _fromUtf8 = lambda s: s
 
-class Ui_MainWindow(object):
+
+class Settings(object):
+    chunk_size = 1024 * 100
+
+
+class STEXMainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.setEnabled(True)
@@ -46,7 +55,7 @@ class Ui_MainWindow(object):
         self.progressBar.setTextDirection(QtGui.QProgressBar.TopToBottom)
         self.progressBar.setObjectName(_fromUtf8("progressBar"))
         self.pushButton = QtGui.QPushButton(self.centralwidget)
-        self.pushButton.setEnabled(False)
+        self.pushButton.setEnabled(True)
         self.pushButton.setGeometry(QtCore.QRect(290, 180, 71, 23))
         self.pushButton.setText(QtGui.QApplication.translate("MainWindow", "Start", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton.setObjectName(_fromUtf8("pushButton"))
@@ -80,27 +89,97 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuAbout.menuAction())
 
         self.retranslateUi(MainWindow)
-        QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.start)
-        QtCore.QObject.connect(self.actionAn_example, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.menuExample)
+        QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL(_fromUtf8("clicked()")), self.start)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def setupData(self):
+        self.settings = Settings()
+        self.proc = {}
 
     def retranslateUi(self, MainWindow):
         pass
 
+    def FN_downloadBylineText(self):
+        from stex.cmd_line import get_songid_from_alternative
+        from stex.parse import get_songinfo, make_fpath
+        from stex.downloader import fetch_file_resp
 
-class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
-    def __init__(self, parent=None, f=QtCore.Qt.WindowFlags()):
-        QtGui.QMainWindow.__init__(self, parent, f)
+        lineText = self.lineEdit.text().__str__()
+        songid = get_songid_from_alternative(lineText)
+        songinfo = get_songinfo(songid)
 
-        self.setupUi(self)
+        resp = fetch_file_resp(songinfo['_mediaurl'])
+        fpath = make_fpath(songinfo)
+        with open(fpath, 'wb') as f:
+            chunk_size = self.settings.chunk_size
+            song_size = int(resp.info().getheaders('Content-Length')[0])
+            song_size_d = 0
+            while True:
+                buf = resp.read(chunk_size)
+                if not buf:
+                    break
+                f.write(buf)
+                self.changeProgressBar(100 * float(song_size_d) / float(song_size))
+                song_size_d += chunk_size
+            self.changeProgressBar(100)
+
+    def start(self):
+        logging.info('ui start')
+#        self.pushButton.setEnabled(False)
+        self.FN_downloadBylineText()
+        #FN_DownloadByLineText(MainWindow).start()
+#        self.pushButton.setEnabled(True)
+
+    def changeProgressBar(self, value):
+        self.progressBar.setValue(int(value))
+
+    def togglePushButtonEnable(self):
+        if self.pushButton.isEnabled():
+            self.pushButton.setEnabled(False)
+            self.pushButton.setText('--')
+        else:
+            self.pushButton.setEnabled(True)
+            self.pushButton.setText('Start')
+
+
+class FN_DownloadByLineText(QtCore.QThread):
+    def run(self):
+        logging.info('download thread run')
+        from stex.cmd_line import get_songid_from_alternative
+        from stex.parse import get_songinfo, make_fpath
+        from stex.downloader import fetch_file_resp
+
+        ui.togglePushButtonEnable()
+
+        lineText = ui.lineEdit.text().__str__()
+        songid = get_songid_from_alternative(lineText)
+        songinfo = get_songinfo(songid)
+
+        resp = fetch_file_resp(songinfo['_mediaurl'])
+        fpath = make_fpath(songinfo)
+        with open(fpath, 'wb') as f:
+            chunk_size = ui.settings.download['chunk_size']
+            song_size = int(resp.info().getheaders('Content-Length')[0])
+            song_size_d = 0
+            while True:
+                buf = resp.read(chunk_size)
+                if not buf: break
+                f.write(buf)
+                ui.changeProgressBar(100*float(song_size_d)/float(song_size))
+                song_size_d += chunk_size
+            ui.changeProgressBar(100)
+        ui.progressBar.reset()
+
+        ui.togglePushButtonEnable()
 
 
 if __name__ == "__main__":
-    import sys
+    logging.basicConfig(level=logging.DEBUG)
+
     app = QtGui.QApplication(sys.argv)
     MainWindow = QtGui.QMainWindow()
-    ui = Ui_MainWindow()
+    ui = STEXMainWindow()
     ui.setupUi(MainWindow)
+    ui.setupData()
     MainWindow.show()
     sys.exit(app.exec_())
-
