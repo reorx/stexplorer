@@ -37,6 +37,11 @@ def fetch_file_resp(url):
     return resp
 
 
+def mkdir(dirpath):
+    if not os.path.isdir(dirpath):
+        os.makedirs(dirpath)
+
+
 def download(url, fname, dirpath=None, chunk_size=1024 * 500):
     print '## url', url
     HEADERS['Host'] = urlparse(url).netloc

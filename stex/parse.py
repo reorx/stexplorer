@@ -207,20 +207,5 @@ def get_songid_from_alternative(s):
 
 def get_songinfo(songid):
     songinfo = STPageParser(songid).parse()
+    songinfo['filename'] = songinfo['id3']['title'] + '.' + songinfo['_mediatype']
     return songinfo
-
-
-def make_fpath(songinfo):
-    song_title = songinfo['id3']['title']
-    fname = song_title + '.' + songinfo['_mediatype']
-    dir_str = 'download'
-    # check if exists
-    if os.path.isabs(dir_str):
-        dirpath = dir_str
-    else:
-        root = os.path.join(os.getcwd(), '../')
-        dirpath = os.path.join(root, dir_str)
-    if not os.path.isdir(dirpath):
-        os.makedirs(dirpath)
-    fpath = os.path.abspath(os.path.join(dirpath, fname))
-    return fpath

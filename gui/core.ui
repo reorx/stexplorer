@@ -9,9 +9,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>383</width>
-    <height>256</height>
+    <width>378</width>
+    <height>271</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -31,7 +37,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>60</y>
+      <y>90</y>
       <width>341</width>
       <height>21</height>
      </rect>
@@ -41,10 +47,13 @@
     </property>
    </widget>
    <widget class="QCheckBox" name="checkBox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>90</y>
+      <y>120</y>
       <width>101</width>
       <height>16</height>
      </rect>
@@ -70,7 +79,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>130</y>
+      <y>160</y>
       <width>341</width>
       <height>23</height>
      </rect>
@@ -95,7 +104,7 @@
     <property name="geometry">
      <rect>
       <x>290</x>
-      <y>180</y>
+      <y>200</y>
       <width>71</width>
       <height>23</height>
      </rect>
@@ -104,13 +113,48 @@
      <string>Start</string>
     </property>
    </widget>
+   <widget class="QLineEdit" name="lineEdit_2">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>60</y>
+      <width>241</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit {color: #555;}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+    <property name="placeholderText">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>61</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Directory</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>383</width>
+     <width>378</width>
      <height>21</height>
     </rect>
    </property>
@@ -151,6 +195,12 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>lineEdit_2</tabstop>
+  <tabstop>checkBox</tabstop>
+  <tabstop>pushButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -161,7 +211,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>292</x>
-     <y>209</y>
+     <y>253</y>
     </hint>
     <hint type="destinationlabel">
      <x>250</x>
@@ -185,9 +235,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>lineEdit</sender>
+   <signal>returnPressed()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>start()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>325</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>start()</slot>
   <slot>menuExample()</slot>
+  <slot>chooseDirectory()</slot>
  </slots>
 </ui>
