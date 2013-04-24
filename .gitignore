@@ -1,7 +1,10 @@
 *.py[co]
 *.swp
-downloads/
+*.egg-info/
 
+downloads/
 *.spec
 build/
 dist/
+pyinstaller-*/
+log*.log

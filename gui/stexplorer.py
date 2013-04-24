@@ -14,10 +14,6 @@ import sys
 import logging
 import types
 from PyQt4 import QtCore, QtGui
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-
-
 from stex.cmd_line import get_songid_from_alternative
 from stex.parse import get_songinfo
 from stex.downloader import fetch_file_resp, mkdir
@@ -76,7 +72,7 @@ class STEXMainWindow(QtGui.QMainWindow, coreui.Ui_MainWindow):
 
         self.settings = Settings()
         self._started = False
-        self._root_path = os.path.abspath(os.path.dirname(__file__))
+        self._root_path = os.path.abspath(os.getcwd())
 
         # Reset window size to be fixed
         self.setFixedSize(self.size())
