@@ -20,7 +20,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>STExplorer</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLineEdit" name="lineEdit">
@@ -160,7 +160,7 @@
    </property>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
-     <string>about</string>
+     <string>About</string>
     </property>
     <addaction name="actionST_Explorer"/>
     <addaction name="actionAuthor"/>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'core.ui'
 #
-# Created: Wed Apr 24 16:15:39 2013
+# Created: Wed Apr 24 16:57:06 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -106,12 +106,12 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.checkBox, self.pushButton)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
+        MainWindow.setWindowTitle(_translate("MainWindow", "STExplorer", None))
         self.checkBox.setText(_translate("MainWindow", "ID3 auto fix", None))
         self.label.setText(_translate("MainWindow", "Song id/url", None))
         self.pushButton.setText(_translate("MainWindow", "Start", None))
         self.label_2.setText(_translate("MainWindow", "Directory", None))
-        self.menuAbout.setTitle(_translate("MainWindow", "about", None))
+        self.menuAbout.setTitle(_translate("MainWindow", "About", None))
         self.actionST_Explorer.setText(_translate("MainWindow", "ST Explorer", None))
         self.actionAn_example.setText(_translate("MainWindow", "an example", None))
         self.actionAuthor.setText(_translate("MainWindow", "author", None))
