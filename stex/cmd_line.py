@@ -7,7 +7,6 @@ Created on 2011-12-25
 import os
 import sys
 
-from stex import settings
 from stex.parse import STPageParser, get_songid_from_alternative
 from stex.downloader import download
 

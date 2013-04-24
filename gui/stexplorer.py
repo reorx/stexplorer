@@ -14,6 +14,10 @@ import sys
 import logging
 import types
 from PyQt4 import QtCore, QtGui
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+
 from stex.cmd_line import get_songid_from_alternative
 from stex.parse import get_songinfo
 from stex.downloader import fetch_file_resp, mkdir
@@ -119,7 +123,8 @@ class STEXMainWindow(QtGui.QMainWindow, coreui.Ui_MainWindow):
         self.progressBar.reset()
 
     def getDirpath(self):
-        return self.lineEdit_2._value
+        # Remember to transform QString to str
+        return str(self.lineEdit_2._value)
 
 
 class DownloadThread(QtCore.QThread):
