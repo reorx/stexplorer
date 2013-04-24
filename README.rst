@@ -25,6 +25,8 @@ TODO
 
 * exe freeze (with more detailed options like icon)
 
+* writing to file while receiving, not after receiving
+
 * wrong url handling
 
 * show parsed song information
