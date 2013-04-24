@@ -12,7 +12,7 @@ Screenshots
 Windows
 +++++++
 
-.. image:: screenshot_kubuntu.png
+.. image:: screenshot_windows.png
 
 Kubuntu
 +++++++
