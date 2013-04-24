@@ -15,7 +15,11 @@ Screenshots
 TODO
 ----
 
-* exe freeze
+* exe freeze (with more detailed options like icon)
+
+* wrong url handling
+
+* show parsed song information
 
 * menu
 
