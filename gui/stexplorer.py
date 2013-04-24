@@ -98,8 +98,9 @@ class STEXMainWindow(QtGui.QMainWindow, coreui.Ui_MainWindow):
         self.lineEdit.setEnabled(False)
         self.lineEdit_2.setEnabled(False)
         self.pushButton.setEnabled(False)
-        url = self.lineEdit.text().__str__()
+        self.changeProgressBar(0)
 
+        url = self.lineEdit.text().__str__()
         self.thread = DownloadThread(self, url)
         self.thread.start()
 
