@@ -9,7 +9,15 @@ Simple Qt based GUI tool for downloading songs from SongTaste_
 Screenshots
 -----------
 
-.. image:: screenshot.png
+Windows
++++++++
+
+.. image:: screenshot_kubuntu.png
+
+Kubuntu
++++++++
+
+.. image:: screenshot_kubuntu.png
 
 
 TODO
