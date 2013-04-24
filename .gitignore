@@ -1,7 +1,7 @@
 *.py[co]
-downloads/
-*.mp3
-*.wma
 *.swp
+downloads/
+
+*.spec
 build/
 dist/
