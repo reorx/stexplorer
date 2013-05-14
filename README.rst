@@ -27,7 +27,7 @@ Download and unpack **pyinstaller** to gui/pyinstaller-2.0 folder, then execute:
 
 ::
 
-	$ cd gui
+    $ cd gui
     $ make build
 
 
